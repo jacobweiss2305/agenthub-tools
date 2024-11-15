@@ -1,0 +1,59 @@
+name: Publish Packages
+
+on:
+  push:
+    tags:
+      - 'v*'
+    paths:
+      - 'packages/**'
+
+jobs:
+  determine-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - id: set-matrix
+        run: |
+          CHANGES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | 
+                    grep '^packages/' | 
+                    cut -d'/' -f2 | 
+                    sort -u | 
+                    jq -R -s -c 'split("\n")[:-1]')
+          echo "matrix=${CHANGES}" >> $GITHUB_OUTPUT
+
+  publish:
+    needs: determine-changes
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package: ${{ fromJson(needs.determine-changes.outputs.matrix) }}
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+      
+      - name: Build package
+        working-directory: packages/${{ matrix.package }}
+        run: python -m build
+      
+      - name: Publish to PyPI
+        if: success()
+        working-directory: packages/${{ matrix.package }}
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: twine upload dist/*
