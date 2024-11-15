@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from aihive_tools.core import BaseTool
+from agenthub_tools.core import BaseTool
 
 class DuckduckgoTool(BaseTool):
     """

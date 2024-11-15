@@ -1,17 +1,17 @@
-# AIHive Core
+# AgentHub Core
 
-Core package for the AIHive framework, providing base classes and utilities.
+Core package for the AgentHub framework, providing base classes and utilities.
 
 ## Installation
 
 ```bash
-pip install aihive-tools-core
+pip install agenthub-tools-core
 ```
 
 ## Usage
 
 ```python
-from aihive_tools.core import BaseTool
+from agenthub_tools.core import BaseTool
 
 class MyTool(BaseTool):
     name = "my-tool"
