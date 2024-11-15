@@ -1,0 +1,28 @@
+# packages/jira/pyproject.toml
+[project]
+name = "aihive-tools-jira"
+version = "0.0.1"
+description = "Jira tools for AIHive framework."
+requires-python = ">=3.7"
+readme = "../../README.md"
+authors = [
+    { name = "Jacob Weiss", email = "jaweiss2305@gmail.com" }
+]
+
+dependencies = [
+    "jira",
+]
+
+[project.urls]
+homepage = "https://github.com/jacobweiss2305/aihive-tools"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["aihive_tools", "aihive_tools.jira*"]
+where = ["../../"]
+
+[tool.setuptools.package-data]
+aihive_tools = ["py.typed"]
