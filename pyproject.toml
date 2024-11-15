@@ -1,3 +1,23 @@
+[project]
+name = "aihive"
+version = "0.0.15"
+description = "A general-purpose multi-agent orchestration framework."
+requires-python = ">=3.7"
+readme = "README.md"
+authors = [
+    { name = "Jacob Weiss", email = "jaweiss2305@gmail.com" }
+]
+
+[project.urls]
+homepage = "https://github.com/jacobweiss/aihive"
+
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["aihive*"]
+where = ["."]
+
+[tool.setuptools.package-data]
+aihive = ["py.typed"]

@@ -1,4 +1,7 @@
-# create_venv.ps1
+param(
+    [Parameter(Mandatory=$false)]
+    [string]$dep
+)
 
 # Remove existing venv if it exists
 if (Test-Path "venv") {
@@ -14,8 +17,20 @@ python -m venv venv
 Write-Host "Activating virtual environment..."
 .\venv\Scripts\Activate
 
-# Install package in editable mode with dev dependencies
+# Install package in editable mode with dependencies
 Write-Host "Installing package and dependencies..."
-pip install -e ".[dev]"
+if ($dep) {
+    Write-Host "Installing with dev and $dep dependencies..."
+    pip install -e ".[dev,$dep]"
+} else {
+    Write-Host "Installing with dev dependencies only..."
+    pip install -e ".[dev]"
+}
 
-Write-Host "Setup complete! Virtual environment is activated and ready to use."
+Write-Host "`nAvailable dependency groups:"
+Write-Host "- confluence"
+Write-Host "- jira"
+Write-Host "- duckduckgo"
+Write-Host "- yahoo_finance"
+
+Write-Host "`nSetup complete! Virtual environment is activated and ready to use."
