@@ -1,6 +1,6 @@
 [project]
 name = "aihive-tools-duckduckgo"
-version = "0.0.1"
+version = "0.0.5"
 description = "AIHive duckduckgo package"
 requires-python = ">=3.7"
 readme = "README.md"
