@@ -1,10 +1,9 @@
 # publish_duckduckgo_pypi.yml
 name: Publish DuckDuckGo to PyPI
 on:
-  release:
-    types: [published]
+  push:
     tags:
-      - 'duckduckgo-v*'
+      - 'duckduckgo-v*'  # Changed from 'release' to 'push' event
 
 jobs:
   build-n-publish:

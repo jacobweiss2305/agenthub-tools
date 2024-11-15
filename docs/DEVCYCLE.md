@@ -44,10 +44,10 @@ git pull
 ```bash
 # Create and push test tag
 # For DuckDuckGo updates
-git tag duckduckgo-v0.1.0
-git push origin duckduckgo-v0.1.0
+git tag duckduckgo-v0.0.2
+git push origin duckduckgo-v0.0.2
 
 # For JIRA updates
-git tag jira-v0.1.0
-git push origin jira-v0.1.0
+git tag jira-v0.0.2
+git push origin jira-v0.0.2
 ```
