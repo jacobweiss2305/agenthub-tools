@@ -3,38 +3,38 @@ name: Publish Packages
 on:
   push:
     tags:
-      - 'v*'
-    paths:
-      - 'packages/**'
+      - 'core-v*'        # matches core-v0.0.4
+      - 'duckduckgo-v*'  # matches duckduckgo-v0.0.5
 
 jobs:
-  determine-changes:
+  determine-package:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      package: ${{ steps.set-package.outputs.package }}
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      
-      - id: set-matrix
+      - id: set-package
         run: |
-          CHANGES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | 
-                    grep '^packages/' | 
-                    cut -d'/' -f2 | 
-                    sort -u | 
-                    jq -R -s -c 'split("\n")[:-1]')
-          echo "matrix=${CHANGES}" >> $GITHUB_OUTPUT
+          TAG_NAME="${{ github.ref_name }}"
+          if [[ $TAG_NAME =~ ^([^-]+)-v ]]; then
+            PACKAGE="${BASH_REMATCH[1]}"
+            echo "package=$PACKAGE" >> $GITHUB_OUTPUT
+          else
+            echo "Invalid tag format. Expected: <package>-v<version>"
+            exit 1
+          fi
 
   publish:
-    needs: determine-changes
+    needs: determine-package
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        package: ${{ fromJson(needs.determine-changes.outputs.matrix) }}
-    
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Verify package exists
+        run: |
+          if [ ! -d "packages/${{ needs.determine-package.outputs.package }}" ]; then
+            echo "Package directory packages/${{ needs.determine-package.outputs.package }} does not exist"
+            exit 1
+          fi
       
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -47,12 +47,12 @@ jobs:
           pip install build twine
       
       - name: Build package
-        working-directory: packages/${{ matrix.package }}
+        working-directory: packages/${{ needs.determine-package.outputs.package }}
         run: python -m build
       
       - name: Publish to PyPI
         if: success()
-        working-directory: packages/${{ matrix.package }}
+        working-directory: packages/${{ needs.determine-package.outputs.package }}
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
